@@ -7,7 +7,7 @@ timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
 log_dir = "logs"
 os.makedirs(log_dir , exist_ok=True)
-log_filename = os.path.join(log_dir,f"_{timestamp}.log")
+log_filename = os.path.join(log_dir,f"report_{timestamp}.log")
 
 logging.basicConfig(
     filename=log_filename,
