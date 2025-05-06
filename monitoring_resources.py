@@ -22,6 +22,7 @@ def save_report():
         f.write(f"RAM usage: {ram}%\n")
         f.write(f"Disk usage: {disk_usage}%\n")
         f.write(f"timestamp : {timestamp}")
+        f.write("AGGIUNTO LOG DI TEST")
 
 
 # Chiamata della funzione per generare il report
