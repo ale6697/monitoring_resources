@@ -7,4 +7,4 @@ Questo script monitora le risorse del sistema come CPU, memoria e spazio disco.
 Esegui il file con Python:
 
 ```bash
-python monitoring_script.py
+python monitoring_resources.py
