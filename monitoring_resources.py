@@ -18,7 +18,7 @@ logging.basicConfig(
 )
 
 def send_alert(subject , message):
-    logging.warning(f"ALERT: {subject} - {message}")
+    logging.warning(f"{subject} - {message}")
     print(f"\nSubject : {subject}\nMessage : {message}")
 
 def check_disk():
