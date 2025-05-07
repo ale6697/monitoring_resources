@@ -1,9 +1,0 @@
-INIZIALIZZA GIT
-git init 
-git add NOME SCRIPT DA VERSIONARE
-git commit -m "TESTO DEL COMMIT"
-
-COLLEGA IL REPOSITORY GITHUB
-git remote add origin URL DEL REPOSITORY GITHUB
-git branch -M main
-git push -u origin main
