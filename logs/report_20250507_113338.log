@@ -1,0 +1,6 @@
+2025-05-07 11:33:39,152 - WARNING - ALERT: ALERT DISK USAGE - Usage disk is at 83.7
+2025-05-07 11:33:44,187 - INFO - CPU usage: 25.4%
+2025-05-07 11:33:44,187 - INFO - RAM usage: 63.6%
+2025-05-07 11:33:44,187 - INFO - Disk usage: 83.7%
+2025-05-07 11:33:44,188 - INFO - Upload speed : 908.8 bytes per seond
+2025-05-07 11:33:44,188 - INFO - Download speed : 3346.6 bytes per second
