@@ -25,7 +25,7 @@ def check_disk():
     usage = psutil.disk_usage("C:\\")
     percent = usage.percent
     if percent > threshold:
-        send_alert(subject="ALERT DISK USAGE",message=f"Usage disk is at {percent}")
+        send_alert(subject="ALERT",message=f"Usage disk is at {percent}")
     return percent  # Sempre restituisce percentuale, anche se < 80%
 
 def check_cpu():
