@@ -1,20 +1,16 @@
 # Monitoring Resources
 
-Questo script monitora le risorse del sistema come CPU, memoria e spazio disco.
+Questo script monitora le risorse del sistema come CPU, memoria e spazio disco. È utile per ottenere una panoramica dello stato delle risorse del sistema in tempo reale.
 
+## 📋 Requisiti
 
-## Requisiti 
+- Python 3.8 o superiore
+- Librerie richieste (installabili tramite `requirements.txt`)
 
-Installa le librerie con il comando:
+## 🚀 Installazione
 
-```bash
-pip install -r requirements.txt
-
-
-## Come si usa
-
-
-Esegui il file con Python:
+Clona il repository e naviga nella cartella:
 
 ```bash
-python monitoring_resources.py
+git clone https://github.com/tuo-username/monitoring-resources.git
+cd monitoring-resources
