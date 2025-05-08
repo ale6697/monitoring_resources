@@ -12,7 +12,7 @@ default_config = {
     "threshold" : 80,
     "log_dir" : "logs",
     "check_interval" : 60,
-    "disk_partition" : "C:\\",
+    "disk_partitions" : ["C:\\"],
     "alert_email" : "ale.derossi97@gmail.com"
 }
 
@@ -31,7 +31,7 @@ with open(config_file, "r") as f:
 threshold = config["threshold"]
 log_dir = config["log_dir"]
 interval = config["check_interval"]
-partition = config["disk_partition"]    
+partitions = config["disk_partitions"]    
 
 # Creo la directory dei log con nome formattato come report_timestamp
 os.makedirs(log_dir, exist_ok=True)
@@ -47,26 +47,30 @@ logging.basicConfig(
 
 
 class systemMonitor:
-    def __init__(self, threshold, partition):
+    def __init__(self, threshold, partitions):
         self.threshold = threshold
-        self.partition = partition
+        self.partitions = partitions
 
+    # Funzione che stampa l'alert nel CMD
     def send_alert(self , subject , message):
         logging.warning(f"{subject} - {message}")
         print(f"\nSubject : {subject}\nMessage : {message}")
-    
-    def check_disk(self):
-        try:
-            usage = psutil.disk_usage(self.partition)
-            percent = usage.percent
-            if percent > self.threshold:
-                self.send_alert(subject="ALERT",message=f"Disk usage is at : {percent}%")
-                return percent
-        except Exception as e:
-            logging.error(f"Errore nel controllo del disco : {e}")
-            self.send_alert("Disk error" ,str(e))
-            return -1
-        
+
+    # Funzione che controlla l'utilizzo del disco rigido in tutte le partizioni
+    def check_disk_all(self):
+        for partition in self.partitions:
+            try:
+                usage = psutil.disk_usage(partition)
+                percent = usage.percent
+                if percent > self.threshold:
+                    self.send_alert(subject="ALERT",message=f"Disk usage on {partition} is at : {percent}%")
+                logging.info(f"Disk usage on {partition} : {percent}%")               
+            except Exception as e:
+                logging.error(f"Errore nel controllo del disco {partition} : {e}")
+                self.send_alert("Disk error" ,f"{partition} : {str(e)}")
+
+
+    #Funzione che controlla l'utilizzo della CPU   
     def check_cpu(self):
         try:
             return psutil.cpu_percent(interval=1)
@@ -74,7 +78,9 @@ class systemMonitor:
             logging.error(f"Errore nel controllo della CPU : {e}")
             self.send_alert("CPU Error", str(e))
             return -1
-        
+
+
+    #Funzione che controlla l'utilizzo della RAM     
     def check_ram(self):
         try:
             return psutil.virtual_memory().percent
@@ -82,7 +88,8 @@ class systemMonitor:
             logging.error(f"Errore nel controllo della RAM : {e}")
             self.send_alert("RAM Error", str(e))
             return -1
-        
+
+    #Funzione che controlla la velocità in download e upload        
     def check_bandwidth(self):
         try:
             net1 = psutil.net_io_counters()
@@ -101,18 +108,56 @@ class systemMonitor:
             self.send_alert("Network error", str(e))
             return -1 , -1
         
+    # Funzione che controlla la temperatura della CPU , inserita 
+    # come commento perchè non disponibile in windows la libreria
+    #  psutil.sensors_temperature()
+#    def check_temperature_cpu(self):
+#        try:
+#            temps = psutil.sensors_temperature()
+#            if not temps:
+#                return None
+#            for name , entries in temps.item():
+#                for entry in entries:
+#                    if entry.current:
+#                        return entry.current
+#            return None
+#        except Exception as e:
+#            self.send_alert(f"Temperature error : ", str(e))
+#            return None
+
+    # Funzione che controlla i processi attivi
+    def check_top_processes(self, limit=5):
+        try:
+            processes = sorted(psutil.process_iter(['pid','name','cpu_percent','memory_percent']),
+                               key=lambda p: p.info['cpu_percent'],reverse=True)
+            return processes[:limit]
+        except Exception as e:
+            self.send_alert("Process monitor error : ", str(e))
+            return[]
+
+    #Funzione che scrive nel report di log   
     def save_report(self):
         try:
             cpu = self.check_cpu()
             ram = self.check_ram()
-            disk_usage = self.check_disk()
+            self.check_disk_all()
             upload_speed, download_speed = self.check_bandwidth()
-
+          #  cpu_temp = self.check_temperature_cpu()
+            top_processes = self.check_top_processes()
+            
+            #Log risorse di sistema
             logging.info(f"CPU usage : {cpu}%")
             logging.info(f"RAM usage : {ram}%")
-            logging.info(f"Disk usage : {disk_usage}%")
             logging.info(f"Upload speed : {upload_speed:.2f} Mbps")
             logging.info(f"Download speed : {download_speed:.2f} Mbps")
+           # if cpu_temp is not None:
+            #    logging.info(f"CPU temperature : {cpu_temp:.2f}°C")
+
+            #Log processi 
+            logging.info("Top processes : ")
+            for proc in top_processes:
+                logging.info(f"PID : {proc.pid}, Name : {proc.info['name']}, "
+                             f"CPU: {proc.info['cpu_percent']}%, MEM: {proc.info['memory_percent']:.2f}%")
 
             print(f"Report salvato : {log_filename}")
 
@@ -122,11 +167,12 @@ class systemMonitor:
 
 
 # Inizializza il monitor
-monitor = systemMonitor(threshold , partition)
+monitor = systemMonitor(threshold , partitions)
 
 #Pianificazione periodica
 schedule.every(interval).seconds.do(monitor.save_report)
 
+#Main
 if __name__ == "__main__":
     print("Inzio monitoraggio...")
     while True:

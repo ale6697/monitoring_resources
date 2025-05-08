@@ -2,6 +2,8 @@
     "threshold": 80,
     "log_dir": "logs",
     "check_interval": 60,
-    "disk_partition": "C:\\",
+    "disk_partitions": [
+        "C:\\"
+    ],
     "alert_email": "ale.derossi97@gmail.com"
 }
