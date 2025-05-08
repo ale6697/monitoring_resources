@@ -125,7 +125,7 @@ class systemMonitor:
 monitor = systemMonitor(threshold , partition)
 
 #Pianificazione periodica
-schedule.every(interval).second.do(monitor.save_report)
+schedule.every(interval).seconds.do(monitor.save_report)
 
 if __name__ == "__main__":
     print("Inzio monitoraggio...")
